@@ -1,5 +1,5 @@
 ##################################################
-# Anything wrong? Find me via telegram: @CN_SZTL #
+# Anything wrong? Find me via telegram: @MTP_2018 #
 ##################################################
 
 #! /bin/bash
@@ -20,48 +20,48 @@ ok_font="${green_fontcolor}[OK]${default_fontcolor}"
 
 function check_os(){
 	clear
-	echo -e "正在检测当前是否为ROOT用户..."
+	echo -e "Detecting if it is currently a ROOT user..."
 	if [[ $EUID -ne 0 ]]; then
 		clear
-		echo -e "${error_font}当前并非ROOT用户，请先切换到ROOT用户后再使用本脚本。"
+		echo -e "${error_font} is not currently a ROOT user. Please switch to the ROOT user before using this script."
 		exit 1
 	else
 		clear
-		echo -e "${ok_font}检测到当前为Root用户。"
+		echo -e "${ok_font} has detected that it is currently a Root user."
 	fi
 	clear
-	echo -e "正在检测此OS是否被支持..."
+	echo -e "Detecting if this OS is supported..."
 	if [ ! -z "$(cat /etc/issue | grep Debian)" ];then
 		OS='debian'
 		clear
-		echo -e "${ok_font}该脚本支持您的系统。"
+		echo -e "${ok_font} This script supports your system."
 	elif [ ! -z "$(cat /etc/issue | grep Ubuntu)" ];then
 		OS='ubuntu'
 		clear
-		echo -e "${ok_font}该脚本支持您的系统。"
+		echo -e "${ok_font} This script supports your system."
 	else
 		clear
-		echo -e "${error_font}目前暂不支持您使用的操作系统，请切换至Debian/Ubuntu。"
+		echo -e "${error_font} does not currently support your operating system. Please switch to Debian/Ubuntu."
 		exit 1
 	fi
 	clear
-	echo -e "正在检测系统架构是否被支持..."
+	echo -e "Detecting system architecture is supported..."
 	system_bit=$(uname -m)
 	if  [[ ${system_bit} = "x86_64" ]]; then
 		clear
-		echo -e "${ok_font}该脚本支持您的系统架构。"
+		echo -e "${ok_font} This script supports your system architecture."
 	else
 		clear
-		echo -e "${error_font}目前暂不支持您使用的系统架构，请切换至x86_64。"
+		echo -e "${error_font} does not currently support your system architecture. Please switch to x86_64."
 		exit 1
 	fi
 	systemctl daemon-reload
 	if [[ $? -eq 0 ]];then
 		clear
-		echo -e "${ok_font}systemctl服务正常。"
+		echo -e "${ok_font}The systemctl service is normal."
 	else
 		clear
-		echo -e "${error_font}systemctl服务未正常运行，无法使用！"
+		echo -e "${error_font}The systemctl service is not working properly and cannot be used!"
 		exit 1
 	fi
 }
@@ -69,42 +69,42 @@ function check_os(){
 function check_install_status(){
 	install_type=$(cat /usr/local/mtproto/install_type.txt)
 	if [[ ${install_type} = "" ]]; then
-		install_status="${red_fontcolor}未安装${default_fontcolor}"
-		mtproto_use_command="${red_fontcolor}未安装${default_fontcolor}"
+		install_status="${red_fontcolor}Not installed${default_fontcolor}"
+		mtproto_use_command="${red_fontcolor}Not Installed${default_fontcolor}"
 	else
-		install_status="${green_fontcolor}已安装${default_fontcolor}"
+		install_status="${green_fontcolor}has been installed${default_fontcolor}"
 		mtproto_use_command="${green_backgroundcolor}$(cat /usr/local/mtproto/telegram_link.txt)${default_fontcolor}"
 	fi
 	mtproto_program=$(find /usr/local/mtproto/mtproto)
 	if [[ ${mtproto_program} = "" ]]; then
-		mtproto_status="${red_fontcolor}未安装${default_fontcolor}"
+		mtproto_status="${red_fontcolor}Not Installed${default_fontcolor}"
 	else
 		mtproto_pid=$(ps -ef |grep "mtproto" |grep -v "grep" | grep -v ".sh"| grep -v "init.d" |grep -v "service" |awk '{print $2}')
 		if [[ ${mtproto_pid} = "" ]]; then
-			mtproto_status="${red_fontcolor}未运行${default_fontcolor}"
+			mtproto_status="${red_fontcolor}Not running${default_fontcolor}"
 		else
-			mtproto_status="${green_fontcolor}正在运行${default_fontcolor} | ${green_fontcolor}${mtproto_pid}${default_fontcolor}"
+			mtproto_status="${green_fontcolor}running${default_fontcolor} | ${green_fontcolor}${mtproto_pid}${default_fontcolor}"
 		fi
 	fi
 }
 
 function echo_install_list(){
 	clear
-	echo -e "脚本当前安装状态：${install_status}
+	echo -e "The current installation status of the script：${install_status}
 --------------------------------------------------------------------------------------------------
-安装MTProto:
-	1.MTProto
+Install MTProto:
+	1.MTProto Run Setup
 --------------------------------------------------------------------------------------------------
-MTProto当前运行状态：${mtproto_status}
-	2.更新脚本
-	3.更新程序
-	4.卸载程序
+MTProto Current Operating Status：${mtproto_status}
+	2.Update Script
+	3.Update Program
+	4.Uninstall Program
 
-	5.启动程序
-	6.关闭程序
-	7.重启程序
+	5.Starting Program
+	6.Turn off an App
+	7.Restart Program
 --------------------------------------------------------------------------------------------------
-客户端运行指令：${mtproto_use_command}
+Client run instructions：${mtproto_use_command}
 --------------------------------------------------------------------------------------------------"
 	stty erase '^H' && read -p "请输入序号：" determine_type
 	if [[ ${determine_type} = "" ]]; then
