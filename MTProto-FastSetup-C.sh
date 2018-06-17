@@ -47,12 +47,15 @@ if [ -f "/etc/secret" ]; then
 	IP=$(curl -4 -s ip.sb)
 	SECRET=$(cat /etc/secret)
 	PORT=$(cat /etc/proxy-port)
-	echo "MTProxy Installed"
-	echo "Server IP：  ${IP}"
-	echo "Port：       ${PORT}"
-	echo "Secret：     ${SECRET}"
-	echo ""
-	echo -e "TG Proxy Link：${green}tg://proxy?server=${IP}&port=${PORT}&secret=${SECRET}${plain}"
+	echo "MTProxy Installed！"
+        echo "Server IP： ${IP}"
+        echo "Port：      ${uport}"
+        echo "Secret：    ${SECRET}"
+        echo "TAG：       ${TAG}"
+        echo ""
+        echo -e "TG Proxy link：${green}https://t.me/proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
+        echo ""
+        echo -e "TG Proxy link：${green}tg://proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
 	exit 0
 fi
 
@@ -125,17 +128,16 @@ fi
 
 if [[ ${OS} == CentOS ]];then
 	if [[ $CentOS_RHEL_version == 7 ]];then
-		systemctl status firewalld > /dev/null 2>&1
-	        systemctl enable firewalld
+		systemctl enable firewalld
 	        systemctl start firewalld
-                systemctl status firewalld
-	        sudo firewall-cmd --zone=public --add-port=${uport}/tcp --permanent
-	        sudo firewall-cmd --zone=public --add-port=${uport}/udp --permanent
-                sudo firewall-cmd --reload
+                systemctl status firewalld > /dev/null 2>&1
+		firewall-cmd --permanent --add-port=${uport}/tcp
+		firewall-cmd --permanent --add-port=${uport}/udp
+	        firewall-cmd --reload
         if [ $? -eq 0 ]; then
-	        sudo firewall-cmd --zone=public --add-port=${uport}/tcp --permanent
-	        sudo firewall-cmd --zone=public --add-port=${uport}/udp --permanent
-                sudo firewall-cmd --reload
+	        firewall-cmd --permanent --add-port=${uport}/tcp
+		firewall-cmd --permanent --add-port=${uport}/udp
+	        firewall-cmd --reload
 	else
 		iptables-restore < /etc/iptables.up.rules
 		iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
