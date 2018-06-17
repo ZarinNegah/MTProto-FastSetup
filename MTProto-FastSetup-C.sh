@@ -63,7 +63,8 @@ if [[ -z "${uport}" ]];then
 fi
 
 if [ ${OS} == CentOS ];then
-  yum install wget gcc gcc-c++ flex bison make bind bind-libs bind-utils openssl openssl-devel firewalld perl quota libaio libcom_err-devel libcurl-devel tar diffutils nano dbus.x86_64 db4-devel cyrus-sasl-devel perl-ExtUtils-Embed.x86_64 cpan vim-common screen libtool perl-core zlib-devel htop git curl sudo -y
+  yum update -y
+  yum install wget gcc gcc-c++ flex bison make bind bind-libs bind-utils epel-release iptables-services openssl openssl-devel firewalld perl quota libaio libcom_err-devel libcurl-devel tar diffutils nano dbus.x86_64 db4-devel cyrus-sasl-devel perl-ExtUtils-Embed.x86_64 cpan vim-common screen libtool perl-core zlib-devel htop git curl sudo -y
   yum groupinstall "Development Tools" -y
 fi
 
@@ -88,6 +89,14 @@ curl -s https://core.telegram.org/getProxyConfig -o /etc/proxy-multi.conf
 echo "${uport}" > /etc/proxy-port
 head -c 16 /dev/urandom | xxd -ps > /etc/secret
 SECRET=$(cat /etc/secret)
+echo "Port：      ${PORT}"
+echo "Secret：   ${SECRET}"
+echo "Register your proxy with @MTProxybot on Telegram"
+echo "Set received tag with @MTProxybot on Telegram and Past Command"
+read -p "Set Proxy Tag： " tag
+if [[ -z "${tag}" ]];then
+	tag="0000"
+fi
 
 # Set Up the Systemd Service Management Configuration
 cat << EOF > /etc/systemd/system/MTProxy.service
@@ -116,8 +125,8 @@ if [[ ${OS} == CentOS ]];then
 		systemctl status firewalld > /dev/null 2>&1
         if [ $? -eq 0 ]; then
 	    sudo yum -y install firewalld
+	    sudo systemctl enable firewalld
 	    sudo systemctl start firewalld
-            sudo systemctl enable firewalld
             sudo systemctl status firewalld
 	    sudo firewall-cmd --zone=public --add-port=${uport}/tcp --permanent
 	    sudo firewall-cmd --zone=public --add-port=${uport}/udp --permanent
