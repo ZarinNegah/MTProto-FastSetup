@@ -10,6 +10,9 @@ apt-get install -y curl && curl -O https://raw.githubusercontent.com/ZarinNegah/
 - - -
 ## CentOS : Copy the Command to Your VPS & Execute It:
 ```bash
+yum install wget -y
+```
+```bash
 wget -N --no-check-certificate https://raw.githubusercontent.com/ZarinNegah/MTProto-FastSetup/master/MTProto-FastSetup-C.sh && bash MTProto-FastSetup-C.sh
 ```
 - - -
