@@ -67,7 +67,8 @@ if [ ${OS} == Ubuntu ] || [ ${OS} == Debian ];then
   apt-get install firewalld -y
   systemctl enable firewalld
   systemctl start firewalld
-  systemctl status firewalld
+  rpm -q iptables
+  sudo iptables -L
 fi
 
 # Enter the Proxy Port
