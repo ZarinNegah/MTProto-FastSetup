@@ -63,7 +63,7 @@ if [[ -z "${uport}" ]];then
 fi
 
 if [ ${OS} == CentOS ];then
-  yum install wget gcc gcc-c++ flex bison make bind bind-libs bind-utils openssl openssl-devel perl quota libaio libcom_err-devel libcurl-devel tar diffutils nano dbus.x86_64 db4-devel cyrus-sasl-devel perl-ExtUtils-Embed.x86_64 cpan vim-common screen libtool perl-core zlib-devel htop git curl sudo -y
+  yum install wget gcc gcc-c++ flex bison make bind bind-libs bind-utils openssl openssl-devel firewalld perl quota libaio libcom_err-devel libcurl-devel tar diffutils nano dbus.x86_64 db4-devel cyrus-sasl-devel perl-ExtUtils-Embed.x86_64 cpan vim-common screen libtool perl-core zlib-devel htop git curl sudo -y
   yum groupinstall "Development Tools" -y
 fi
 
@@ -115,18 +115,22 @@ if [[ ${OS} == CentOS ]];then
 	if [[ $CentOS_RHEL_version == 7 ]];then
 		systemctl status firewalld > /dev/null 2>&1
         if [ $? -eq 0 ]; then
-            firewall-cmd --permanent --zone=public --add-port=${uport}/tcp
-            firewall-cmd --permanent --zone=public --add-port=${uport}/udp
-            firewall-cmd --reload
+	    sudo yum -y install firewalld
+	    sudo systemctl start firewalld
+            sudo systemctl enable firewalld
+            sudo systemctl status firewalld
+	    sudo firewall-cmd --zone=public --add-port=${uport}/tcp --permanent
+	    sudo firewall-cmd --zone=public --add-port=${uport}/udp --permanent
+            sudo firewall-cmd --reload
 		else
 			iptables-restore < /etc/iptables.up.rules
 			iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
-    		iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
+    		        iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
 			iptables-save > /etc/iptables.up.rules
 		fi
 	else
 		iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
-    	iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
+    	        iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
 		/etc/init.d/iptables save
 		/etc/init.d/iptables restart
 	fi
