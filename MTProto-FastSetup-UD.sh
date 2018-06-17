@@ -79,7 +79,7 @@ fi
 
 if [ ${OS} == Ubuntu ] || [ ${OS} == Debian ];then
 	apt-get update -y
-  apt-get install build-essential libssl-dev zlib1g-dev curl git vim-common wget sudo firewalld nano screen -y
+  apt-get install build-essential libssl-dev zlib1g-dev curl git vim-common wget sudo firewalld nano -y
 	apt-get install xxd -y
 fi
 
