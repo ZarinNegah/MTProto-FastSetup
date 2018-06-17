@@ -71,12 +71,17 @@ fi
 # Get Native IP Address
 IP=$(curl -4 -s ip.sb)
 
-# Download MTProxy Project Source Code
+# Switch to Temporary Directory
+mkdir /tmp/MTProxy
+cd /tmp/MTProxy
+
+# 下载 MTProxy 项目源码
 git clone https://github.com/TelegramMessenger/MTProxy
 
-# Go to Project Compile and Install to /usr/local/bin/
-cd MTProxy
-make && cd objs/bin
+# 进入项目编译并安装至 /usr/local/bin/
+pushd MTProxy
+make -j ${THREAD}
+cp objs/bin/mtproto-proxy /usr/local/bin/
 
 # Generate a Key
 curl -s https://core.telegram.org/getProxySecret -o /etc/proxy-secret
@@ -103,8 +108,8 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/MTProxy
-ExecStart=/opt/MTProxy/mtproto-proxy -u nobody -p 64335 -H ${uport} -S ${SECRET} -P ${TAG} --aes-pwd /etc/proxy-secret /etc/proxy-multi.conf
+WorkingDirectory=/usr/local/bin/
+ExecStart=/usr/local/bin/mtproto-proxy -u nobody -p 64335 -H ${uport} -S ${SECRET} -P ${TAG} --aes-pwd /etc/proxy-secret /etc/proxy-multi.conf
 Restart=on-failure
 
 [Install]
