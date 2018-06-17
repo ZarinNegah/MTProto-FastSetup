@@ -93,11 +93,11 @@ echo "Port：   ${PORT}"
 echo "Secret： ${SECRET}"
 echo "Register your proxy with @MTProxybot on Telegram"
 echo "Set received tag with @MTProxybot on Telegram and Past Command"
-stty erase '^H' && read -p "Set Proxy Tag： " install_proxytag
-if [[ ${install_proxytag} = "" ]]; then
-   install_proxytag=""
-echo -e "${install_proxytag}" > /etc/install_proxytag.txt
-TAG=$(cat /etc/install_proxytag.txt)
+read -p "Set Proxy Tag： " proxytag
+if [[ ${proxytag} = "" ]]; then
+   proxytag=""
+echo "${proxytag}" > /etc/proxytag.txt
+TAG=$(cat /etc/proxytag.txt)
 fi
 
 # Set Up the Systemd Service Management Configuration
