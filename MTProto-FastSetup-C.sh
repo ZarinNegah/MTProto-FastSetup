@@ -71,17 +71,12 @@ fi
 # Get Native IP Address
 IP=$(curl -4 -s ip.sb)
 
-# Switch to Temporary Directory
-mkdir /tmp/MTProxy
-cd /tmp/MTProxy
-
 # Download MTProxy Project Source Code
 git clone https://github.com/TelegramMessenger/MTProxy
 
 # Go to Project Compile and Install to /usr/local/bin/
-pushd MTProxy
-make -j ${THREAD}
-cp objs/bin/mtproto-proxy /usr/local/bin/
+cd MTProxy
+make && cd objs/bin
 
 # Generate a Key
 curl -s https://core.telegram.org/getProxySecret -o /etc/proxy-secret
@@ -96,9 +91,9 @@ echo "Set received tag with @MTProxybot on Telegram and Past Command"
 read -p "Set Proxy Tag： " proxytag
 if [[ ${proxytag} = "" ]]; then
    proxytag=""
-echo "${proxytag}" > /etc/proxytag.txt
-TAG=$(cat /etc/proxytag.txt)
 fi
+echo "${proxytag}" > /etc/proxy-tag
+TAG=$(cat /etc/proxy-tag)
 
 # Set Up the Systemd Service Management Configuration
 cat << EOF > /etc/systemd/system/MTProxy.service
@@ -108,8 +103,8 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/usr/local/bin/
-ExecStart=/usr/local/bin/mtproto-proxy -u nobody -p 64335 -H ${uport} -S ${SECRET} -P ${TAG} --aes-pwd /etc/proxy-secret /etc/proxy-multi.conf
+WorkingDirectory=/opt/MTProxy
+ExecStart=/opt/MTProxy/mtproto-proxy -u nobody -p 64335 -H ${uport} -S ${SECRET} -P ${TAG} --aes-pwd /etc/proxy-secret /etc/proxy-multi.conf
 Restart=on-failure
 
 [Install]
