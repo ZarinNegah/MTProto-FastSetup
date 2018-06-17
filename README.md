@@ -21,4 +21,10 @@ yum install wget -y && wget -N --no-check-certificate https://raw.githubusercont
 ( CentOs 7.X Supported )
 
 - - -
+## Channel Advertising:
+To Advertise a Channel Get a Tag From @MTProxybot on Telegram
+- - -
+## Performance:
+The Proxy Performance Should be Enough to Comfortably Server About 10000 Simultaneous Users on the Smallest VPS Instance with 1 CPU Core and 1024MB RAM.
+- - -
 Enjoy It
