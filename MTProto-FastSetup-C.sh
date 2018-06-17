@@ -34,12 +34,12 @@ plain='\033[0m'
 
 # Print Welcome Message
 clear
-echo "---------------------------------------------"
+echo "----------------------------------------------------"
 echo "  Install MTProto For Telegram with Promoted Channel"
 echo "  Author: ZarinNegah"
 echo "  URL: http://Fastsetup.MTProtoServer.ir/"
 echo "  Telegram: https://t.me/mtp_2018"
-echo "---------------------------------------------"
+echo "----------------------------------------------------"
 echo ""
 
 
@@ -47,15 +47,17 @@ if [ -f "/etc/secret" ]; then
 	IP=$(curl -4 -s ip.sb)
 	SECRET=$(cat /etc/secret)
 	PORT=$(cat /etc/proxy-port)
+	TAG=$(cat /etc/proxy-tag)
 	echo "MTProxy Installed！"
         echo "Server IP： ${IP}"
-        echo "Port：      ${uport}"
+        echo "Port：      ${PORT}"
         echo "Secret：    ${SECRET}"
         echo "TAG：       ${TAG}"
         echo ""
         echo -e "TG Proxy link：${green}https://t.me/proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
         echo ""
         echo -e "TG Proxy link：${green}tg://proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
+	echo ""
 	exit 0
 fi
 
