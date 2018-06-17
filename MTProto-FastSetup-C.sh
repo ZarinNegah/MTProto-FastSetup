@@ -1,3 +1,7 @@
+##################################################
+# Anything wrong? Find me via telegram: @MTP_2018 #
+##################################################
+
 #!/usr/bin/env bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
@@ -14,40 +18,27 @@ if [ -n "$(grep 'Aliyun Linux release' /etc/issue)" -o -e /etc/redhat-release ];
 elif [ -n "$(grep 'Amazon Linux AMI release' /etc/issue)" -o -e /etc/system-release ]; then
   OS=CentOS
   CentOS_RHEL_version=6
-elif [ -n "$(grep bian /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == 'Debian' ]; then
-  OS=Debian
-  [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
-  Debian_version=$(lsb_release -sr | awk -F. '{print $1}')
-elif [ -n "$(grep Deepin /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == 'Deepin' ]; then
-  OS=Debian
-  [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
-  Debian_version=$(lsb_release -sr | awk -F. '{print $1}')
-elif [ -n "$(grep Ubuntu /etc/issue)" -o "$(lsb_release -is 2>/dev/null)" == 'Ubuntu' -o -n "$(grep 'Linux Mint' /etc/issue)" ]; then
-  OS=Ubuntu
-  [ ! -e "$(which lsb_release)" ] && { apt-get -y update; apt-get -y install lsb-release; clear; }
-  Ubuntu_version=$(lsb_release -sr | awk -F. '{print $1}')
-  [ -n "$(grep 'Linux Mint 18' /etc/issue)" ] && Ubuntu_version=16
 else
   echo "${CFAILURE}Does not support this OS, Please contact the author! ${CEND}"
   kill -9 $$
 fi
 
-# 检测CPU线程数
+# Detect CPU Threads
 THREAD=$(grep 'processor' /proc/cpuinfo | sort -u | wc -l)
 
-# 定义终端颜色
+# Define the Terminal Color
 red='\033[0;31m'
 green='\033[0;32m'
 yellow='\033[0;33m'
 plain='\033[0m'
 
-# 打印欢迎信息
+# Print Welcome Message
 clear
 echo "---------------------------------------------"
-echo "  Install MTProxy For Telegram with Onekey"
-echo "  Author: 雨落无声"
-echo "  URL: https://ylws.me"
-echo "  Telegram: https://t.me/ylwsclub"
+echo "  Install MTProto For Telegram with Promoted Channel"
+echo "  Author: ZarinNegah"
+echo "  URL: http://Fastsetup.MTProtoServer.ir/"
+echo "  Telegram: https://t.me/mtp_2018"
 echo "---------------------------------------------"
 echo ""
 
@@ -56,55 +47,49 @@ if [ -f "/etc/secret" ]; then
 	IP=$(curl -4 -s ip.sb)
 	SECRET=$(cat /etc/secret)
 	PORT=$(cat /etc/proxy-port)
-	echo "MTProxy 已安装"
-	echo "服务器IP：  ${IP}"
-	echo "端口：      ${PORT}"
+	echo "MTProxy Installed"
+	echo "Server IP：  ${IP}"
+	echo "Port：      ${PORT}"
 	echo "Secret：   ${SECRET}"
 	echo ""
-	echo -e "TG代理链接：${green}tg://proxy?server=${IP}&port=${PORT}&secret=${SECRET}${plain}"
+	echo -e "TG Proxy Link：${green}tg://proxy?server=${IP}&port=${PORT}&secret=${SECRET}${plain}"
 	exit 0
 fi
 
-# 输入代理端口
-read -p "Inout the Port for running MTProxy [Default: 5000]： " uport
+# Enter the Proxy Port
+read -p "Inout the Port for running MTProxy [Default: 2082]： " uport
 if [[ -z "${uport}" ]];then
-	uport="5000"
-fi
-
-if [ ${OS} == Ubuntu ] || [ ${OS} == Debian ];then
-	apt-get update -y
-  apt-get install build-essential libssl-dev zlib1g-dev curl git vim-common -y
-	apt-get install xxd -y
+	uport="2082"
 fi
 
 if [ ${OS} == CentOS ];then
-  yum install openssl-devel zlib-devel curl git vim-common -y
+  yum install wget gcc gcc-c++ flex bison make bind bind-libs bind-utils openssl openssl-devel perl quota libaio libcom_err-devel libcurl-devel tar diffutils nano dbus.x86_64 db4-devel cyrus-sasl-devel perl-ExtUtils-Embed.x86_64 cpan vim-common screen libtool perl-core zlib-devel htop git curl sudo -y
   yum groupinstall "Development Tools" -y
 fi
 
-# 获取本机 IP 地址
+# Get Native IP Address
 IP=$(curl -4 -s ip.sb)
 
-# 切换至临时目录
+# Switch to Temporary Directory
 mkdir /tmp/MTProxy
 cd /tmp/MTProxy
 
-# 下载 MTProxy 项目源码
+# Download MTProxy Project Source Code
 git clone https://github.com/TelegramMessenger/MTProxy
 
-# 进入项目编译并安装至 /usr/local/bin/
+# Go to Project Compile and Install to /usr/local/bin/
 pushd MTProxy
 make -j ${THREAD}
 cp objs/bin/mtproto-proxy /usr/local/bin/
 
-# 生成密钥
+# Generate a Key
 curl -s https://core.telegram.org/getProxySecret -o /etc/proxy-secret
 curl -s https://core.telegram.org/getProxyConfig -o /etc/proxy-multi.conf
 echo "${uport}" > /etc/proxy-port
 head -c 16 /dev/urandom | xxd -ps > /etc/secret
 SECRET=$(cat /etc/secret)
 
-# 设置 Systemd 服务管理配置
+# Set Up the Systemd Service Management Configuration
 cat << EOF > /etc/systemd/system/MTProxy.service
 [Unit]
 Description=MTProxy
@@ -113,7 +98,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/usr/local/bin/
-ExecStart=/usr/local/bin/mtproto-proxy -u nobody -p 64335 -H ${uport} -S ${SECRET} --aes-pwd /etc/proxy-secret /etc/proxy-multi.conf
+ExecStart=/usr/local/bin/mtproto-proxy -u nobody -p 64335 -H ${uport} -S ${SECRET} -P ${TAG} --aes-pwd /etc/proxy-secret /etc/proxy-multi.conf
 Restart=on-failure
 
 [Install]
@@ -121,17 +106,9 @@ WantedBy=multi-user.target
 EOF
 
 
-# 设置防火墙
+# Setting Up a Firewall
 if [ ! -f "/etc/iptables.up.rules" ]; then 
     iptables-save > /etc/iptables.up.rules
-fi
-
-if [[ ${OS} =~ ^Ubuntu$|^Debian$ ]];then
-	iptables-restore < /etc/iptables.up.rules
-	clear
-	iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
-	iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
-	iptables-save > /etc/iptables.up.rules
 fi
 
 if [[ ${OS} == CentOS ]];then
@@ -156,20 +133,20 @@ if [[ ${OS} == CentOS ]];then
 fi
 
 
-# 设置开机自启并启动 MTProxy
+# Set Boot From Start and Start MTProxy
 systemctl daemon-reload
 systemctl enable MTProxy.service
 systemctl restart MTProxy
 
-# 清理安装残留
+# Clean Installation Residue
 rm -rf /tmp/MTProxy >> /dev/null 
 
-# 显示服务信息
+# Display Service Information
 clear
-echo "MTProxy 安装成功！"
-echo "服务器IP：  ${IP}"
-echo "端口：      ${uport}"
+echo "MTProxy Successful Installation！"
+echo "Server IP：  ${IP}"
+echo "Port：      ${uport}"
 echo "Secret：   ${SECRET}"
 echo ""
-echo -e "TG代理链接：${green}tg://proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
+echo -e "TG Proxy link：${green}tg://proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
 
