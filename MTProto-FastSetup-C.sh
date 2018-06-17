@@ -59,6 +59,14 @@ if [ -f "/etc/secret" ]; then
 	exit 0
 fi
 
+# Firewalld
+if [ ${OS} == CentOS ];then
+  yum install firewalld -y
+  systemctl enable firewalld
+  systemctl start firewalld
+  systemctl status firewalld
+fi
+
 # Enter the Proxy Port
 read -p "Inout the Port for running MTProxy [Default: 2082]： " uport
 if [[ -z "${uport}" ]];then
@@ -128,12 +136,7 @@ fi
 
 if [[ ${OS} == CentOS ]];then
 	if [[ $CentOS_RHEL_version == 7 ]];then
-		systemctl enable firewalld
-	        systemctl start firewalld
-                systemctl status firewalld > /dev/null 2>&1
-		firewall-cmd --permanent --add-port=${uport}/tcp
-		firewall-cmd --permanent --add-port=${uport}/udp
-	        firewall-cmd --reload
+		
         if [ $? -eq 0 ]; then
 	        firewall-cmd --permanent --add-port=${uport}/tcp
 		firewall-cmd --permanent --add-port=${uport}/udp
@@ -172,3 +175,4 @@ echo ""
 echo -e "TG Proxy link：${green}https://t.me/proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
 echo ""
 echo -e "TG Proxy link：${green}tg://proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
+echo ""
