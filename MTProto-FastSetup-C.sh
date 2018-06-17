@@ -49,8 +49,8 @@ if [ -f "/etc/secret" ]; then
 	PORT=$(cat /etc/proxy-port)
 	echo "MTProxy Installed"
 	echo "Server IP：  ${IP}"
-	echo "Port：      ${PORT}"
-	echo "Secret：   ${SECRET}"
+	echo "Port：       ${PORT}"
+	echo "Secret：     ${SECRET}"
 	echo ""
 	echo -e "TG Proxy Link：${green}tg://proxy?server=${IP}&port=${PORT}&secret=${SECRET}${plain}"
 	exit 0
@@ -89,13 +89,15 @@ curl -s https://core.telegram.org/getProxyConfig -o /etc/proxy-multi.conf
 echo "${uport}" > /etc/proxy-port
 head -c 16 /dev/urandom | xxd -ps > /etc/secret
 SECRET=$(cat /etc/secret)
-echo "Port：      ${PORT}"
-echo "Secret：   ${SECRET}"
+echo "Port：   ${PORT}"
+echo "Secret： ${SECRET}"
 echo "Register your proxy with @MTProxybot on Telegram"
 echo "Set received tag with @MTProxybot on Telegram and Past Command"
-read -p "Set Proxy Tag： " tag
-if [[ -z "${tag}" ]];then
-	tag="0000"
+stty erase '^H' && read -p "Set Proxy Tag： " install_proxytag
+if [[ ${install_proxytag} = "" ]]; then
+   install_proxytag=""
+echo -e "${install_proxytag}" > /etc/install_proxytag.txt
+TAG=$(cat /etc/install_proxytag.txt)
 fi
 
 # Set Up the Systemd Service Management Configuration
@@ -123,19 +125,22 @@ fi
 if [[ ${OS} == CentOS ]];then
 	if [[ $CentOS_RHEL_version == 7 ]];then
 		systemctl status firewalld > /dev/null 2>&1
+		sudo yum -y install firewalld
+	        sudo systemctl enable firewalld
+	        sudo systemctl start firewalld
+                sudo systemctl status firewalld
+	        sudo firewall-cmd --zone=public --add-port=${uport}/tcp --permanent
+	        sudo firewall-cmd --zone=public --add-port=${uport}/udp --permanent
+                sudo firewall-cmd --reload
         if [ $? -eq 0 ]; then
-	    sudo yum -y install firewalld
-	    sudo systemctl enable firewalld
-	    sudo systemctl start firewalld
-            sudo systemctl status firewalld
-	    sudo firewall-cmd --zone=public --add-port=${uport}/tcp --permanent
-	    sudo firewall-cmd --zone=public --add-port=${uport}/udp --permanent
-            sudo firewall-cmd --reload
-		else
-			iptables-restore < /etc/iptables.up.rules
-			iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
-    		        iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
-			iptables-save > /etc/iptables.up.rules
+	        sudo firewall-cmd --zone=public --add-port=${uport}/tcp --permanent
+	        sudo firewall-cmd --zone=public --add-port=${uport}/udp --permanent
+                sudo firewall-cmd --reload
+	else
+		iptables-restore < /etc/iptables.up.rules
+		iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
+    		iptables -I INPUT -m state --state NEW -m udp -p udp --dport $uport -j ACCEPT
+		iptables-save > /etc/iptables.up.rules
 		fi
 	else
 		iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport $uport -j ACCEPT
@@ -157,9 +162,9 @@ rm -rf /tmp/MTProxy >> /dev/null
 # Display Service Information
 clear
 echo "MTProxy Successful Installation！"
-echo "Server IP：  ${IP}"
+echo "Server IP： ${IP}"
 echo "Port：      ${uport}"
-echo "Secret：   ${SECRET}"
+echo "Secret：    ${SECRET}"
 echo ""
 echo -e "TG Proxy link：${green}tg://proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
 
