@@ -1,5 +1,5 @@
 ##################################################
-# Anything wrong? Find me via telegram: @MTP_2018 #
+# Anything wrong? Find me via telegram:@MTP_2018 #
 ##################################################
 
 #!/usr/bin/env bash
