@@ -89,9 +89,10 @@ curl -s https://core.telegram.org/getProxyConfig -o /etc/proxy-multi.conf
 echo "${uport}" > /etc/proxy-port
 head -c 16 /dev/urandom | xxd -ps > /etc/secret
 SECRET=$(cat /etc/secret)
-echo "Port：   ${PORT}"
-echo "Secret： ${SECRET}"
-echo "Register your proxy with @MTProxybot on Telegram"
+echo "Server IP： ${IP}"
+echo "Port：      ${uport}"
+echo "Secret：    ${SECRET}"
+echo "Register your Proxy with Bot @MTProxybot on Telegram"
 echo "Set received tag with @MTProxybot on Telegram and Past Command"
 read -p "Set Proxy Tag： " proxytag
 if [[ ${proxytag} = "" ]]; then
@@ -125,10 +126,9 @@ fi
 if [[ ${OS} == CentOS ]];then
 	if [[ $CentOS_RHEL_version == 7 ]];then
 		systemctl status firewalld > /dev/null 2>&1
-		sudo yum -y install firewalld
-	        sudo systemctl enable firewalld
-	        sudo systemctl start firewalld
-                sudo systemctl status firewalld
+	        systemctl enable firewalld
+	        systemctl start firewalld
+                systemctl status firewalld
 	        sudo firewall-cmd --zone=public --add-port=${uport}/tcp --permanent
 	        sudo firewall-cmd --zone=public --add-port=${uport}/udp --permanent
                 sudo firewall-cmd --reload
@@ -165,6 +165,8 @@ echo "MTProxy Successful Installation！"
 echo "Server IP： ${IP}"
 echo "Port：      ${uport}"
 echo "Secret：    ${SECRET}"
+echo "TAG：       ${TAG}"
+echo ""
+echo -e "TG Proxy link：${green}https://t.me/proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
 echo ""
 echo -e "TG Proxy link：${green}tg://proxy?server=${IP}&port=${uport}&secret=${SECRET}${plain}"
-
