@@ -21,4 +21,4 @@ systemctl daemon-reload
 clear
 echo "Successful uninstallation！"
 
-rm -rf uninstall.sh
+rm -rf UnInstall.sh
