@@ -24,7 +24,7 @@ yum install wget -y && wget -N --no-check-certificate https://raw.githubusercont
 ## UnInstall All Files and Service:
 
 ```bash
-wget -N --no-check-certificate https://raw.githubusercontent.com/ZarinNegah/MTProto-FastSetup/master/UnInstall.sh && bash UnInstall.sh```
+wget -N --no-check-certificate https://raw.githubusercontent.com/ZarinNegah/MTProto-FastSetup/master/UnInstall.sh && bash UnInstall.sh
 ```
 - - -
 ## Channel Advertising:
