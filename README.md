@@ -25,7 +25,7 @@ yum install wget -y && wget -N --no-check-certificate https://raw.githubusercont
 
 ```bash
 wget -N --no-check-certificate https://raw.githubusercontent.com/ZarinNegah/MTProto-FastSetup/master/UnInstall.sh && bash UnInstall.sh```
-
+```
 - - -
 ## Channel Advertising:
 To Advertise a Channel Get a Tag From @MTProxybot on Telegram
