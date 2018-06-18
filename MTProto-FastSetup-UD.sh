@@ -90,10 +90,10 @@ IP=$(curl -4 -s ip.sb)
 mkdir /tmp/MTProxy
 cd /tmp/MTProxy
 
-# 下载 MTProxy 项目源码
+# Download MTProxy project source code
 git clone https://github.com/TelegramMessenger/MTProxy
 
-# 进入项目编译并安装至 /usr/local/bin/
+# Go to project compile and install to /usr/local/bin/
 pushd MTProxy
 make -j ${THREAD}
 cp objs/bin/mtproto-proxy /usr/local/bin/
