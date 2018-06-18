@@ -5,13 +5,13 @@ export PATH
 #Check Root
 [ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
-# 删除文件
+# Delete Files
 rm -rf /etc/proxy-secret
 rm -rf /etc/proxy-multi.conf
 rm -rf /etc/secret
 rm -rf /etc/proxy-port
 
-# 删除服务文件
+# Delete service files
 systemctl disable MTProxy.service
 systemctl stop MTProxy
 rm -rf /etc/systemd/system/MTProxy.service
@@ -19,6 +19,6 @@ systemctl daemon-reload
 
 
 clear
-echo "卸载成功！"
+echo "Successful uninstallation！"
 
 rm -rf uninstall.sh
